@@ -1,0 +1,13 @@
+{
+  "name": "wa-bot",
+  "version": "1.0.0",
+  "description": "WA Bot for file downloader",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@whiskeysockets/baileys": "^6.7.2",
+    "mysql2": "^3.9.7"
+  }
+}
