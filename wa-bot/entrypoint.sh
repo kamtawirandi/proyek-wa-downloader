@@ -1,4 +1,5 @@
 #!/bin/sh
+# paksa update
 
 while [ ! -f /usr/src/app/index.js ]; do
   echo "Menunggu file index.js dari volume siap..."
