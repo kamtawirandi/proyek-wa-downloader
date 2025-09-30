@@ -1,16 +1,18 @@
-# Gunakan image resmi Node.js versi 18
 FROM node:18
 
-# Tentukan direktori kerja di dalam kontainer
 WORKDIR /usr/src/app
 
-# Salin file package.json dan instal dependensi
-# Ini dilakukan terpisah agar Docker bisa menggunakan cache
+# Salin entrypoint script terlebih dahulu
+COPY entrypoint.sh .
+
+# Lanjutkan proses seperti biasa
 COPY package*.json ./
 RUN npm install
 
-# Salin sisa kode aplikasi
 COPY . .
 
-# Perintah untuk menjalankan aplikasi saat kontainer dimulai
-CMD node index.js
+# Tentukan entrypoint script sebagai perintah utama
+ENTRYPOINT ["/usr/src/app/entrypoint.sh"]
+
+# Tentukan perintah default yang akan dijalankan oleh entrypoint
+CMD [ "node", "index.js" ]
