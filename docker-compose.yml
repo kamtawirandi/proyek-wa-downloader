@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  # Layanan untuk Database MySQL
+  db:
+    image: mysql:8.0
+    container_name: wa-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - wa-network
+
+  # Layanan untuk Web Panel (PHP + Apache)
+  web:
+    build:
+      context: ./web-panel
+    container_name: wa-web-panel
+    depends_on:
+      - db
+    ports:
+      - "8080:80"
+    volumes:
+      - ./web-panel:/var/www/html
+      - ./storage-wa-bot:/var/www/html/storage
+    networks:
+      - wa-network
+    environment:
+      - DB_HOST=db
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_DATABASE}
+
+  # Layanan untuk WA Bot (Node.js)
+  bot:
+    build:
+      context: ./wa-bot
+    container_name: wa-bot
+    depends_on:
+      - db
+    volumes:
+      - ./wa-bot:/usr/src/app
+      - ./storage-wa-bot:/usr/src/app/storage
+      - wa_session:/usr/src/app/session
+    networks:
+      - wa-network
+    environment:
+      - DB_HOST=db
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_DATABASE}
+    stdin_open: true # Menjaga agar container tetap berjalan
+    tty: true        # Menjaga agar container tetap berjalan
+
+volumes:
+  db_data:
+  wa_session:
+
+networks:
+  wa-network:
+    driver: bridge
