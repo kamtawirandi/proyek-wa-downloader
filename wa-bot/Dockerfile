@@ -13,4 +13,4 @@ RUN npm install
 COPY . .
 
 # Perintah untuk menjalankan aplikasi saat kontainer dimulai
-CMD [ "node", "index.js" ]
+CMD node index.js
